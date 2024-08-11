@@ -39,12 +39,14 @@ Missing values are imputed using appropriate strategies such as mean, median, or
 
 ```python
 data.fillna(data.median(), inplace=True)
+```
 
 ## Encoding Categorical Variables
 Categorical variables are converted into numerical format using techniques like One-Hot Encoding to make them suitable for logistic regression.
 
 ```python
 data = pd.get_dummies(data, drop_first=True)
+```
 
 ## Feature Scaling
 Feature scaling standardizes the range of independent variables to improve the performance and convergence of the logistic regression model.
@@ -53,6 +55,7 @@ Feature scaling standardizes the range of independent variables to improve the p
 from sklearn.preprocessing import StandardScaler
 scaler = StandardScaler()
 X = scaler.fit_transform(X)
+```
 
 ## Feature Selection
 ### Variance Inflation Factor (VIF)
@@ -64,6 +67,7 @@ vif_data = pd.DataFrame()
 vif_data["feature"] = X.columns
 vif_data["VIF"] = [variance_inflation_factor(X.values, i) for i in range(len(X.columns))]
 print(vif_data)
+```
 
 ## Recursive Feature Elimination (RFE)
 RFE selects the most important features by recursively removing the least significant features and ranking them by importance.
@@ -76,6 +80,7 @@ rfe = RFE(model, n_features_to_select=5)
 X_rfe = rfe.fit_transform(X, y)
 selected_features = X.columns[rfe.support_]
 print("Selected Features:", selected_features)
+```
 
 ## Model Training
 ### Generalized Linear Model (GLM)
@@ -86,6 +91,7 @@ import statsmodels.api as sm
 X_const = sm.add_constant(X_rfe)
 glm_model = sm.GLM(y, X_const, family=sm.families.Binomial()).fit()
 print(glm_model.summary())
+```
 
 ## Logistic Regression Model
 The logistic regression model is trained on the selected features to predict the probability of the binary outcome.
@@ -94,6 +100,7 @@ The logistic regression model is trained on the selected features to predict the
 from sklearn.linear_model import LogisticRegression
 log_model = LogisticRegression()
 log_model.fit(X_rfe, y)
+```
 
 ### Hyperparameter Tuning
 Hyperparameter tuning is performed using GridSearchCV to find the best model parameters and enhance model performance.
@@ -104,6 +111,7 @@ param_grid = {'C': [0.1, 1, 10, 100], 'penalty': ['l2']}
 grid_model = GridSearchCV(LogisticRegression(), param_grid, cv=5)
 grid_model.fit(X_rfe, y)
 print("Best Parameters:", grid_model.best_params_)
+```
 
 ## Model Evaluation
 ### Confusion Matrix
@@ -114,6 +122,7 @@ from sklearn.metrics import confusion_matrix
 y_pred = log_model.predict(X_rfe)
 cm = confusion_matrix(y, y_pred)
 print("Confusion Matrix:\n", cm)
+```
 
 ## Accuracy, Precision, Recall, and F1 Score
 These metrics provide a comprehensive assessment of the model’s classification performance.
@@ -128,6 +137,7 @@ print(f'Accuracy: {accuracy}')
 print(f'Precision: {precision}')
 print(f'Recall: {recall}')
 print(f'F1 Score: {f1}')
+```
 
 ## ROC Curve and AUC
 The ROC curve and AUC (Area Under the Curve) evaluate the model's ability to distinguish between classes.
@@ -138,6 +148,7 @@ y_prob = log_model.predict_proba(X_rfe)[:, 1]
 fpr, tpr, thresholds = roc_curve(y, y_prob)
 roc_auc = auc(fpr, tpr)
 print(f'AUC: {roc_auc}')
+```
 
 ## Visualizations
 ### Confusion Matrix Heatmap
@@ -151,6 +162,7 @@ plt.xlabel('Predicted')
 plt.ylabel('Actual')
 plt.title('Confusion Matrix Heatmap')
 plt.show()
+```
 
 ## ROC Curve
 The ROC curve shows the trade-off between the true positive rate and the false positive rate.
@@ -164,6 +176,7 @@ plt.ylabel('True Positive Rate')
 plt.title('ROC Curve')
 plt.legend(loc='lower right')
 plt.show()
+```
 
 ## Conclusion
 This repository provides a comprehensive guide to building and evaluating a logistic regression model. By following the steps outlined, you can develop a robust model for binary classification tasks and assess its performance using various statistical metrics and visualization techniques.
